@@ -43,7 +43,7 @@ except FileExistsError:
         os.mkdir(args.output_dir + album_name)
     else: exit()
 
-os.chdir(album_name)
+os.chdir(args.output_dir + album_name)
 
 # download album cover
 cover = album_page.find_all(
