@@ -69,21 +69,22 @@ if args.mp3 or 'FLAC' not in header:
     audio_format   = 0
     file_extension = '.mp3'
 
-
-def download(name, link):    
+def download(name, link):
     page = BeautifulSoup(requests.get(link).content, features="lxml")
 
-    link = [link for link in page\
-            .find_all('a', {"style" : "color: #21363f;"}, href=True)]\
-            [audio_format].get('href')
+    link = page.find_all('a', {"style" : "color: #21363f;"},href=True)\
+        [audio_format].get('href')
 
-    name += [p for p in page.find_all('p', {"align" : "left"})]\
-        [-1].text.splitlines()[-1].split(": ", 1)[-1] + file_extension
+    name += page.find_all('p', {"align" : "left"})[-1]\
+                .text\
+                .splitlines()[-1]\
+                .split(": ", 1)[-1]\
+                + file_extension
 
-
-    data = requests.get(link).content
     with open(name, 'wb') as output_file:
+        data = requests.get(link).content
         output_file.write(data)
+
 
 with concurrent.futures.ThreadPoolExecutor() as executor:
     executor.map(download, names, links)
